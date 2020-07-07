@@ -1,6 +1,0 @@
-{
-	"testRegex": "(/test/.+\\.test\\.ts$)",
-	"moduleFileExtensions": ["ts", "js"],
-	"coverageDirectory": "./coverage/",
-	"collectCoverage": true
-}
