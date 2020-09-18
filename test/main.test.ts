@@ -8,7 +8,6 @@
 // 	// indicatorMovingAverage
 // } from '@d3fc/d3fc-technical-indicator';
 
-// const macdKaelZhang = require('macd');
 import * as macdKaelZhang from 'macd';
 import * as d3fc from '@d3fc/d3fc-technical-indicator';
 
@@ -19,22 +18,6 @@ import {
 	macd,
 	macdGetOneResult // , sma
 } from '../lib/main';
-
-test('Placeholder test', () => {
-	// Arrange
-	// Act
-	// Assert
-	expect(true).toBeTruthy();
-});
-
-test('typeof test', () => {
-	// Arrange
-	// Act
-	// Assert
-	expect(typeof 0).toBe('number');
-	expect(typeof NaN).toBe('number');
-	expect(typeof 'string').toBe('string');
-});
 
 const array1 = [
 	2,
@@ -80,28 +63,48 @@ const array1 = [
 	71
 ];
 
-// describe('Test 1 - EMA', () => {
-// 	it('Rocks!', done => {
-// 		// Arrange
-// 		const period = 9;
+const fast = 12,
+	slow = 26,
+	signal = 9;
 
-// 		// Act
-// 		const resultThaw = ema(array1, period, period);
-// 		const fnD3fc = indicatorExponentialMovingAverage();
+const fnNaNToUndefined = (n: number) => (Number.isNaN(n) ? undefined : n);
 
-// 		fnD3fc.period(period);
+test('Placeholder test', () => {
+	// Arrange
+	// Act
+	// Assert
+	expect(true).toBeTruthy();
+});
 
-// 		const resultD3fc = fnD3fc(array1);
+test('typeof test', () => {
+	// Arrange
+	// Act
+	// Assert
+	expect(typeof 0).toBe('number');
+	expect(typeof NaN).toBe('number');
+	expect(typeof 'string').toBe('string');
+});
 
-// 		// console.log('macdThaw: result is', resultThaw);
-// 		// console.log('d3fc: result is', resultD3fc);
+test('@d3fc ema Test 1', () => {
+	// Arrange
+	const period = 9;
 
-// 		// Assert
-// 		// test.expect(1);
-// 		assert.deepEqual(resultThaw, resultD3fc);
-// 		done();
-// 	});
-// });
+	// Act
+	const resultThaw = ema(array1, period, period).map(fnNaNToUndefined);
+	const fnD3fc = d3fc.indicatorExponentialMovingAverage();
+
+	fnD3fc.period(period);
+
+	const resultD3fc = fnD3fc(array1);
+
+	// console.log('macdThaw: result is', resultThaw);
+	// console.log('d3fc: result is', resultD3fc);
+
+	// Assert
+	// test.expect(1);
+	// assert.deepEqual(resultThaw, resultD3fc);
+	expect(resultThaw).toStrictEqual(resultD3fc);
+});
 
 test('EMA test', () => {
 	// Arrange
@@ -182,10 +185,6 @@ test('macdGetOneResult test', () => {
 	expect(signalValue).toBeTruthy();
 });
 
-const fast = 12,
-	slow = 26,
-	signal = 9;
-
 test('KaelZhang macd Test 1 Comprehensive', () => {
 	// console.log(
 	// 	'macdKaelZhang is',
@@ -254,7 +253,6 @@ test('@d3fc macd Test 1 Comprehensive', () => {
 	// 	return diffs.findIndex((n) => n !== 0);
 	// };
 
-	const fnNaNToUndefined = (n: number) => (Number.isNaN(n) ? undefined : n);
 	const fnD3fc = d3fc.indicatorMacd();
 	// Note ema fn is d3fc.indicatorExponentialMovingAverage();
 
