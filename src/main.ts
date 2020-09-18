@@ -2,7 +2,12 @@
 
 'use strict';
 
-import { createArrayFromElement, mean } from 'thaw-common-utilities.ts';
+import {
+	cascade,
+	createArrayFromElement,
+	// getLastElementOfArray,
+	mean
+} from 'thaw-common-utilities.ts';
 
 // Note: We could steal from these two projects:
 // https://github.com/jonschlinkert/is-number.git
@@ -11,7 +16,7 @@ import { createArrayFromElement, mean } from 'thaw-common-utilities.ts';
 // y=n=>typeof n,z=n=>!((y(n)==='string'&&!n.trim())||y(n)!=='number')&&(n-n+1)>=0
 // Also, why not replace (n-n+1)>=0 with (n-n+1)>0 ?
 
-function isNumber(n: any): boolean {
+function isNumber(n: unknown): boolean {
 	return typeof n === 'number' && !Number.isNaN(n) && Number.isFinite(n);
 }
 
@@ -44,7 +49,7 @@ export function ema(
 
 	i = Math.max(i, j);
 
-	const resultArray = createArrayFromElement(NaN, i) || [];
+	const resultArray = createArrayFromElement(NaN, i);
 	// meanValue is the initial value which stabilizes the exponential average.
 	// It is the simple average of the first seedLength values in the array,
 	// after skipping any initial run of invalid values (e.g. NaN)
@@ -52,21 +57,38 @@ export function ema(
 	const meanValue = mean(
 		array.slice(i + 1 - seedLength, i + 1).filter(isNumber)
 	);
-	let result = meanValue;
 
-	// a.concat(b) appends the elements in b to the end of a.
-	return resultArray.concat(
-		[meanValue],
-		array.slice(i + 1).map((element: number): number => {
-			if (!isNumber(result)) {
-				result = element;
-			} else if (isNumber(element)) {
-				result = alpha * element + (1 - alpha) * result;
-			} // else: result is not modified
+	// 1)
+	// let result = meanValue;
 
-			return result;
-		})
-	);
+	// // a.concat(b) appends the elements in b to the end of a.
+	// return resultArray.concat(
+	// 	[meanValue],
+	// 	array.slice(i + 1).map((element: number): number => {
+	// 		if (!isNumber(result)) {
+	// 			result = element;
+	// 		} else if (isNumber(element)) {
+	// 			result = alpha * element + (1 - alpha) * result;
+	// 		} // else: result is not modified
+
+	// 		return result;
+	// 	})
+	// );
+
+	// 2)
+	return resultArray
+		.concat(
+			[meanValue],
+			cascade(
+				(seedValue: number, element: number) =>
+					!isNumber(seedValue)
+						? element
+						: alpha * element + (1 - alpha) * seedValue,
+				meanValue,
+				array.slice(i + 1)
+			)
+		)
+		.slice(0, array.length);
 }
 
 export function macd(
@@ -110,6 +132,8 @@ export function macdGetOneResult(
 		signalPeriod,
 		usePeriodAsSeedLength
 	);
+
+	// return [getLastElementOfArray(macds), getLastElementOfArray(signals)];
 
 	return [macds[macds.length - 1], signals[signals.length - 1]];
 }

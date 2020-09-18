@@ -2,14 +2,6 @@
 
 'use strict';
 
-// TODO:
-// Install the npm packages '@d3fc/d3fc-technical-indicator' and 'macd' :
-//
-// 	"devDependencies": {
-// 		"@d3fc/d3fc-technical-indicator": "^7.0.36",
-// 		"macd": "^1.0.2"
-// 	},
-
 // import {
 // 	indicatorExponentialMovingAverage,
 // 	indicatorMacd //,
@@ -17,7 +9,10 @@
 // } from '@d3fc/d3fc-technical-indicator';
 
 // const macdKaelZhang = require('macd');
-// -> import * as macdKaelZhang from 'macd';
+import * as macdKaelZhang from 'macd';
+import * as d3fc from '@d3fc/d3fc-technical-indicator';
+
+// import { pointwise } from 'thaw-common-utilities.ts';
 
 import {
 	ema,
@@ -185,4 +180,170 @@ test('macdGetOneResult test', () => {
 	// Assert
 	expect(macdValue).toBeTruthy();
 	expect(signalValue).toBeTruthy();
+});
+
+const fast = 12,
+	slow = 26,
+	signal = 9;
+
+describe('Library', () => {
+	describe('KaelZhang macd Test 1 Comprehensive', () => {
+		it('Rocks!', (done) => {
+			// console.log(
+			// 	'macdKaelZhang is',
+			// 	typeof macdKaelZhang,
+			// 	macdKaelZhang
+			// );
+
+			for (let i = 0; i < array1.length; i++) {
+				// Arrange
+				const array = array1.slice(i);
+				const expectedResult1 = macdKaelZhang.default(
+					array,
+					slow,
+					fast,
+					signal
+				);
+
+				// Act
+				const actualResult1 = macd(array, fast, slow, signal, false);
+
+				// Assert
+				expect(actualResult1[0]).toStrictEqual(expectedResult1.MACD);
+				expect(actualResult1[1]).toStrictEqual(
+					expectedResult1.signal
+				);
+			}
+
+			done();
+		});
+	});
+
+	describe('@d3fc macd Test 1 Comprehensive', () => {
+		it('Rocks!', (done) => {
+			// console.log('d3fc is', typeof d3fc, d3fc);
+			// console.log(
+			// 	'd3fc.indicatorMacd is',
+			// 	typeof d3fc.indicatorMacd,
+			// 	d3fc.indicatorMacd
+			// );
+
+			// const scaleFactor = 100000;
+			// const fnRoundSlightly = (
+			// 	n: number | undefined
+			// ): number | undefined =>
+			// 	typeof n === 'number'
+			// 		? Math.round((n as number) * scaleFactor) / scaleFactor
+			// 		: n;
+			// const calculateDiff = (
+			// 	element1: number | undefined,
+			// 	element2: number | undefined
+			// ): number => {
+			// 	if (
+			// 		typeof element1 === 'undefined' &&
+			// 		typeof element2 === 'undefined'
+			// 	) {
+			// 		return 0;
+			// 	} else if (
+			// 		typeof element1 === 'undefined' ||
+			// 		typeof element2 === 'undefined'
+			// 	) {
+			// 		return 1337;
+			// 	} else {
+			// 		return fnRoundSlightly(element1 - element2);
+			// 	}
+			// };
+			// const fnFindDiff = (
+			// 	array1: Array<number | undefined>,
+			// 	array2: Array<number | undefined>
+			// ): number => {
+			// 	const diffs = pointwise(calculateDiff, array1, array2);
+
+			// 	return diffs.findIndex((n) => n !== 0);
+			// };
+
+			const fnNaNToUndefined = (n: number) =>
+				Number.isNaN(n) ? undefined : n;
+			const fnD3fc = d3fc.indicatorMacd();
+			// Note ema fn is d3fc.indicatorExponentialMovingAverage();
+
+			console.log('fnD3fc is', typeof fnD3fc, fnD3fc);
+
+			fnD3fc.fastPeriod(fast);
+			fnD3fc.slowPeriod(slow);
+			fnD3fc.signalPeriod(signal);
+
+			for (let i = 0; i < array1.length; i++) {
+				// Arrange
+				const array = array1.slice(i);
+				const resultD3fc1 = fnD3fc(array);
+				const expectedResultMacd1 = resultD3fc1.map(
+					(datum: any) => datum.macd
+				);
+				// .map(fnRoundSlightly);
+				const expectedResultSignal1 = resultD3fc1.map(
+					(datum: any) => datum.signal
+				);
+				// .map(fnRoundSlightly);
+
+				// Act
+				const actualResult1 = macd(array, fast, slow, signal, true);
+				const actualResultMacd1 = actualResult1[0].map(
+					fnNaNToUndefined
+				);
+				// .map(fnRoundSlightly);
+				const actualResultSignal1 = actualResult1[1].map(
+					fnNaNToUndefined
+				);
+				// .map(fnRoundSlightly);
+
+				// console.log(
+				// 	'actualResultMacd1 is',
+				// 	typeof actualResultMacd1,
+				// 	actualResultMacd1.length,
+				// 	actualResultMacd1
+				// );
+				// console.log(
+				// 	'expectedResultMacd1 is',
+				// 	typeof expectedResultMacd1,
+				// 	expectedResultMacd1.length,
+				// 	expectedResultMacd1
+				// );
+
+				// console.log(
+				// 	'actualResultSignal1 is',
+				// 	typeof actualResultSignal1,
+				// 	actualResultSignal1.length,
+				// 	actualResultSignal1
+				// );
+				// console.log(
+				// 	'expectedResultSignal1 is',
+				// 	typeof expectedResultSignal1,
+				// 	expectedResultSignal1.length,
+				// 	expectedResultSignal1
+				// );
+
+				// // Assert
+				// expect(actualResultMacd1.length).toBe(
+				// 	expectedResultMacd1.length
+				// );
+				// expect(
+				// 	fnFindDiff(actualResultMacd1, expectedResultMacd1)
+				// ).toBe(-1);
+				expect(actualResultMacd1).toStrictEqual(expectedResultMacd1);
+
+				// expect(actualResultSignal1.length).toBe(
+				// 	expectedResultSignal1.length
+				// );
+				// expect(
+				// 	fnFindDiff(actualResultSignal1, expectedResultSignal1)
+				// ).toBe(-1);
+				expect(actualResultSignal1).toStrictEqual(
+					expectedResultSignal1
+				);
+			}
+
+			done();
+		});
+	});
 });
