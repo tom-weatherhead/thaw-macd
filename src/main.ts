@@ -4,8 +4,9 @@
 
 import {
 	cascade,
-	createArrayFromElement,
-	// getLastElementOfArray,
+	createNaNArray,
+	getLastElementOfArray,
+	isNumber,
 	mean
 } from 'thaw-common-utilities.ts';
 
@@ -16,18 +17,8 @@ import {
 // y=n=>typeof n,z=n=>!((y(n)==='string'&&!n.trim())||y(n)!=='number')&&(n-n+1)>=0
 // Also, why not replace (n-n+1)>=0 with (n-n+1)>0 ?
 
-function isNumber(n: unknown): boolean {
-	return typeof n === 'number' && !Number.isNaN(n) && Number.isFinite(n);
-}
-
-// SMA: Simple moving average
-
-// export function sma(array: number[], period: number): number[] {
-// 	// ThAW 2019-06-27 : This implementation has not yet been verified as correct:
-
-// 	// return mean(array.slice(0, period).filter(isNumber));
-
-// 	return array.map((value, i) => mean(array.slice(Math.max(i - period + 1, 0), period).filter(isNumber)))
+// function isNumber(n: unknown): boolean {
+// 	return typeof n === 'number' && !Number.isNaN(n) && Number.isFinite(n);
 // }
 
 // EMA: Exponential moving average
@@ -52,7 +43,6 @@ export function emaCore(
 			array
 		)
 	);
-	// .slice(0, array.length);
 }
 
 export function ema(
@@ -70,7 +60,7 @@ export function ema(
 
 	i = Math.max(i, j);
 
-	const resultArray = createArrayFromElement(NaN, i);
+	const resultArray = createNaNArray(i);
 	// meanValue is the initial value which stabilizes the exponential average.
 	// It is the simple average of the first seedLength values in the array,
 	// after skipping any initial run of invalid values (e.g. NaN)
@@ -79,41 +69,6 @@ export function ema(
 		array.slice(i + 1 - seedLength, i + 1).filter(isNumber)
 	);
 
-	// 1)
-	// let result = meanValue;
-
-	// // a.concat(b) appends the elements in b to the end of a.
-	// return resultArray.concat(
-	// 	[meanValue],
-	// 	array.slice(i + 1).map((element: number): number => {
-	// 		if (!isNumber(result)) {
-	// 			result = element;
-	// 		} else if (isNumber(element)) {
-	// 			result = alpha * element + (1 - alpha) * result;
-	// 		} // else: result is not modified
-
-	// 		return result;
-	// 	})
-	// );
-
-	// 2)
-	/*
-	const alpha = 2 / (period + 1); // The smoothing constant (Appel p. 134)
-
-	return resultArray
-		.concat(
-			[meanValue],
-			cascade(
-				(seedValue: number, element: number) =>
-					!isNumber(seedValue)
-						? element
-						: alpha * element + (1 - alpha) * seedValue,
-				meanValue,
-				array.slice(i + 1)
-			)
-		)
-		.slice(0, array.length);
-	 */
 	return resultArray
 		.concat(emaCore(array.slice(i + 1), period, meanValue))
 		.slice(0, array.length);
@@ -129,7 +84,7 @@ export function macd(
 	// When usePeriodAsSeedLength is falsy, this algorithm behaves like the npm package 'macd' written by Kael Zhang.
 	// When usePeriodAsSeedLength is truthy, this algorithm behaves like indicatorMacd in the npm package '@d3fc/d3fc-technical-indicator'.
 
-	// return ema(array, fastPeriod) - ema(array, slowPeriod);
+	// I.e. return ema(array, fastPeriod) - ema(array, slowPeriod);
 
 	const fnEmaHelper = (a: number[], p: number): number[] =>
 		ema(a, p, usePeriodAsSeedLength ? p : 1);
@@ -161,7 +116,8 @@ export function macdGetOneResult(
 		usePeriodAsSeedLength
 	);
 
-	// return [getLastElementOfArray(macds), getLastElementOfArray(signals)];
-
-	return [macds[macds.length - 1], signals[signals.length - 1]];
+	return [
+		getLastElementOfArray(macds) || NaN,
+		getLastElementOfArray(signals) || NaN
+	];
 }

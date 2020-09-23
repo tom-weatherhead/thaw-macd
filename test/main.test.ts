@@ -96,12 +96,8 @@ test('@d3fc ema Test 1', () => {
 
 	const resultD3fc = fnD3fc(array1);
 
-	// console.log('macdThaw: result is', resultThaw);
-	// console.log('d3fc: result is', resultD3fc);
-
 	// Assert
 	// test.expect(1);
-	// assert.deepEqual(resultThaw, resultD3fc);
 	expect(resultThaw).toStrictEqual(resultD3fc);
 });
 
@@ -109,8 +105,6 @@ test('EMA test', () => {
 	// Arrange
 	// Act
 	const emaArray = ema(array1, 9);
-
-	// console.log('My EMA is', emaArray);
 
 	// Assert
 	expect(emaArray).toBeTruthy();
@@ -120,9 +114,6 @@ test('macdGetOneResult test', () => {
 	// Arrange
 	// Act
 	const [macdValue, signalValue] = macdGetOneResult(array1);
-
-	// console.log('macdGetOneResult test: macdValue is', macdValue);
-	// console.log('macdGetOneResult test: signalValue is', signalValue);
 
 	// Assert
 	expect(macdValue).toBeTruthy();
@@ -151,9 +142,7 @@ test('KaelZhang macd Test 1 Comprehensive', () => {
 
 test('@d3fc macd Test 1 Comprehensive', () => {
 	const fnD3fc = d3fc.indicatorMacd();
-	// Note ema fn is d3fc.indicatorExponentialMovingAverage();
-
-	console.log('fnD3fc is', typeof fnD3fc, fnD3fc);
+	// Note: ema fn is d3fc.indicatorExponentialMovingAverage();
 
 	fnD3fc.fastPeriod(fast);
 	fnD3fc.slowPeriod(slow);
