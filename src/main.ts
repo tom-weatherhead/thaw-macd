@@ -33,12 +33,33 @@ function isNumber(n: unknown): boolean {
 // EMA: Exponential moving average
 // See Gerald Appel's book 'Technical Analysis - Power Tools for Active Investors', chapter 6, pp. 134-137
 
+// The core of the EMA algorithm. It expects the seed to be provided.
+
+export function emaCore(
+	array: number[],
+	period: number,
+	seed: number
+): number[] {
+	const alpha = 2 / (period + 1); // The smoothing constant (Appel p. 134)
+
+	return [seed].concat(
+		cascade(
+			(cascadeSeed: number, element: number) =>
+				!isNumber(cascadeSeed)
+					? element
+					: alpha * element + (1 - alpha) * cascadeSeed,
+			seed,
+			array
+		)
+	);
+	// .slice(0, array.length);
+}
+
 export function ema(
 	array: number[],
 	period: number,
 	seedLength = 1
 ): number[] {
-	const alpha = 2 / (period + 1); // The smoothing constant (Appel p. 134)
 	let i = array.findIndex(isNumber);
 
 	if (i < 0) {
@@ -76,6 +97,9 @@ export function ema(
 	// );
 
 	// 2)
+	/*
+	const alpha = 2 / (period + 1); // The smoothing constant (Appel p. 134)
+
 	return resultArray
 		.concat(
 			[meanValue],
@@ -88,6 +112,10 @@ export function ema(
 				array.slice(i + 1)
 			)
 		)
+		.slice(0, array.length);
+	 */
+	return resultArray
+		.concat(emaCore(array.slice(i + 1), period, meanValue))
 		.slice(0, array.length);
 }
 
