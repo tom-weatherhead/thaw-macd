@@ -113,11 +113,11 @@ test('EMA test', () => {
 test('macdGetOneResult test', () => {
 	// Arrange
 	// Act
-	const [macdValue, signalValue] = macdGetOneResult(array1);
+	const macdResult = macdGetOneResult(array1);
 
 	// Assert
-	expect(macdValue).toBeTruthy();
-	expect(signalValue).toBeTruthy();
+	expect(macdResult.line).toBeTruthy();
+	expect(macdResult.signal).toBeTruthy();
 });
 
 test('KaelZhang macd Test 1 Comprehensive', () => {
@@ -135,8 +135,8 @@ test('KaelZhang macd Test 1 Comprehensive', () => {
 		const actualResult1 = macd(array, fast, slow, signal, false);
 
 		// Assert
-		expect(actualResult1[0]).toStrictEqual(expectedResult1.MACD);
-		expect(actualResult1[1]).toStrictEqual(expectedResult1.signal);
+		expect(actualResult1.line).toStrictEqual(expectedResult1.MACD);
+		expect(actualResult1.signal).toStrictEqual(expectedResult1.signal);
 	}
 });
 
@@ -161,8 +161,10 @@ test('@d3fc macd Test 1 Comprehensive', () => {
 
 		// Act
 		const actualResult1 = macd(array, fast, slow, signal, true);
-		const actualResultMacd1 = actualResult1[0].map(fnNaNToUndefined);
-		const actualResultSignal1 = actualResult1[1].map(fnNaNToUndefined);
+		const actualResultMacd1 = actualResult1.line.map(fnNaNToUndefined);
+		const actualResultSignal1 = actualResult1.signal.map(
+			fnNaNToUndefined
+		);
 
 		// Assert
 		expect(actualResultMacd1).toStrictEqual(expectedResultMacd1);

@@ -80,7 +80,8 @@ export function macd(
 	slowPeriod = 26,
 	signalPeriod = 9,
 	usePeriodAsSeedLength = false
-): [number[], number[]] {
+	// ): [number[], number[]] {
+): { line: number[]; signal: number[] } {
 	// When usePeriodAsSeedLength is falsy, this algorithm behaves like the npm package 'macd' written by Kael Zhang.
 	// When usePeriodAsSeedLength is truthy, this algorithm behaves like indicatorMacd in the npm package '@d3fc/d3fc-technical-indicator'.
 
@@ -98,7 +99,9 @@ export function macd(
 	);
 	const signalArray = fnEmaHelper(macdArray, signalPeriod);
 
-	return [macdArray, signalArray];
+	// return [macdArray, signalArray];
+
+	return { line: macdArray, signal: signalArray };
 }
 
 export function macdGetOneResult(
@@ -107,8 +110,10 @@ export function macdGetOneResult(
 	slowPeriod = 26,
 	signalPeriod = 9,
 	usePeriodAsSeedLength = false
-): [number, number] {
-	const [macds, signals] = macd(
+	// ): [number, number] {
+): { line: number; signal: number } {
+	// const [macds, signals] = macd(
+	const macdResult = macd(
 		array,
 		fastPeriod,
 		slowPeriod,
@@ -116,8 +121,13 @@ export function macdGetOneResult(
 		usePeriodAsSeedLength
 	);
 
-	return [
-		getLastElementOfArray(macds) || NaN,
-		getLastElementOfArray(signals) || NaN
-	];
+	// return [
+	// 	getLastElementOfArray(macds) || NaN,
+	// 	getLastElementOfArray(signals) || NaN
+	// ];
+
+	return {
+		line: getLastElementOfArray(macdResult.line) || NaN,
+		signal: getLastElementOfArray(macdResult.signal) || NaN
+	};
 }
