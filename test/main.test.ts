@@ -13,6 +13,11 @@ import {
 	macdGetOneResult // , sma
 } from '../lib/main';
 
+interface ID3FCResult {
+	macd: number[];
+	signal: number[];
+}
+
 const array1 = [
 	2,
 	3,
@@ -153,10 +158,10 @@ test('@d3fc macd Test 1 Comprehensive', () => {
 		const array = array1.slice(i);
 		const resultD3fc1 = fnD3fc(array);
 		const expectedResultMacd1 = resultD3fc1.map(
-			(datum: any) => datum.macd
+			(datum: ID3FCResult) => datum.macd
 		);
 		const expectedResultSignal1 = resultD3fc1.map(
-			(datum: any) => datum.signal
+			(datum: ID3FCResult) => datum.signal
 		);
 
 		// Act
