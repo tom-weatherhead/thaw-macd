@@ -22,7 +22,6 @@ A Moving Average Convergence / Divergence calculation algorithm.
 [![tested with jest][jest-badge-image]][jest-url]
 [![code style: prettier][prettier-badge-image]][prettier-url]
 [![license][license-badge-image]][license-url]
-[![FOSSA Status][fossa-badge-image]][fossa-badge-url]
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
@@ -69,5 +68,3 @@ A Moving Average Convergence / Divergence calculation algorithm.
 [prettier-url]: https://github.com/prettier/prettier
 [license-badge-image]: https://img.shields.io/github/license/mashape/apistatus.svg
 [license-url]: https://github.com/tom-weatherhead/thaw-macd/blob/master/LICENSE
-[fossa-badge-image]: https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmoment%2Fmoment.svg?type=shield
-[fossa-badge-url]: https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fmoment%2Fmoment?ref=badge_shield

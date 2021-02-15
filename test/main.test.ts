@@ -11,7 +11,7 @@ import {
 	ema,
 	macd,
 	macdGetOneResult // , sma
-} from '../lib/main';
+} from '..';
 
 interface ID3FCResult {
 	macd: number[];
