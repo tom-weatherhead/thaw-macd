@@ -19,47 +19,9 @@ interface ID3FCResult {
 }
 
 const array1 = [
-	2,
-	3,
-	5,
-	7,
-	11,
-	13,
-	17,
-	19,
-	23,
-	29,
-	31,
-	37,
-	41,
-	43,
-	47,
-	53,
-	59,
-	61,
-	67,
-	71,
+	2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
 
-	2,
-	3,
-	5,
-	7,
-	11,
-	13,
-	17,
-	19,
-	23,
-	29,
-	31,
-	37,
-	41,
-	43,
-	47,
-	53,
-	59,
-	61,
-	67,
-	71
+	2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71
 ];
 
 const fast = 12,
@@ -167,9 +129,7 @@ test('@d3fc macd Test 1 Comprehensive', () => {
 		// Act
 		const actualResult1 = macd(array, fast, slow, signal, true);
 		const actualResultMacd1 = actualResult1.line.map(fnNaNToUndefined);
-		const actualResultSignal1 = actualResult1.signal.map(
-			fnNaNToUndefined
-		);
+		const actualResultSignal1 = actualResult1.signal.map(fnNaNToUndefined);
 
 		// Assert
 		expect(actualResultMacd1).toStrictEqual(expectedResultMacd1);

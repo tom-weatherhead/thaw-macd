@@ -45,11 +45,7 @@ export function emaCore(
 	);
 }
 
-export function ema(
-	array: number[],
-	period: number,
-	seedLength = 1
-): number[] {
+export function ema(array: number[], period: number, seedLength = 1): number[] {
 	let i = array.findIndex(isNumber);
 
 	if (i < 0) {
