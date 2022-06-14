@@ -5,7 +5,7 @@
 import {
 	cascade,
 	createNaNArray,
-	getLastElementOfArray,
+	getLastElementOfNumericArray,
 	isNumber,
 	mean
 } from 'thaw-common-utilities.ts';
@@ -20,6 +20,10 @@ import {
 // function isNumber(n: unknown): boolean {
 // 	return typeof n === 'number' && !Number.isNaN(n) && Number.isFinite(n);
 // }
+
+export const macdDefaultFastPeriod = 12;
+export const macdDefaultSlowPeriod = 26;
+export const macdDefaultSignalPeriod = 9;
 
 // EMA: Exponential moving average
 // See Gerald Appel's book 'Technical Analysis - Power Tools for Active Investors', chapter 6, pp. 134-137
@@ -56,7 +60,6 @@ export function ema(array: number[], period: number, seedLength = 1): number[] {
 
 	i = Math.max(i, j);
 
-	const resultArray = createNaNArray(i);
 	// meanValue is the initial value which stabilizes the exponential average.
 	// It is the simple average of the first seedLength values in the array,
 	// after skipping any initial run of invalid values (e.g. NaN)
@@ -65,7 +68,7 @@ export function ema(array: number[], period: number, seedLength = 1): number[] {
 		array.slice(i + 1 - seedLength, i + 1).filter(isNumber)
 	);
 
-	return resultArray
+	return createNaNArray(i)
 		.concat(emaCore(array.slice(i + 1), period, meanValue))
 		.slice(0, array.length);
 }
@@ -76,39 +79,32 @@ export function macd(
 	slowPeriod = 26,
 	signalPeriod = 9,
 	usePeriodAsSeedLength = false
-	// ): [number[], number[]] {
 ): { line: number[]; signal: number[] } {
-	// When usePeriodAsSeedLength is falsy, this algorithm behaves like the npm package 'macd' written by Kael Zhang.
-	// When usePeriodAsSeedLength is truthy, this algorithm behaves like indicatorMacd in the npm package '@d3fc/d3fc-technical-indicator'.
+	// Return ema(array, fastPeriod) - ema(array, slowPeriod);
 
-	// I.e. return ema(array, fastPeriod) - ema(array, slowPeriod);
+	// When usePeriodAsSeedLength is falsy, this algorithm behaves like the npm package 'macd' written by Kael Zhang.
+
+	// When usePeriodAsSeedLength is truthy, this algorithm behaves like indicatorMacd in the npm package '@d3fc/d3fc-technical-indicator'.
 
 	const fnEmaHelper = (a: number[], p: number): number[] =>
 		ema(a, p, usePeriodAsSeedLength ? p : 1);
 	const fastEma = fnEmaHelper(array, fastPeriod);
 	const slowEma = fnEmaHelper(array, slowPeriod);
-	// const macdArray = fastEma.map((f: number, i: number): number =>
-	// 	isNumber(f) && isNumber(slowEma[i]) ? f - slowEma[i] : NaN
-	// );
 	const macdArray = fastEma.map(
 		(f: number, i: number): number => f - slowEma[i]
 	);
 	const signalArray = fnEmaHelper(macdArray, signalPeriod);
-
-	// return [macdArray, signalArray];
 
 	return { line: macdArray, signal: signalArray };
 }
 
 export function macdGetOneResult(
 	array: number[],
-	fastPeriod = 12,
-	slowPeriod = 26,
-	signalPeriod = 9,
+	fastPeriod = macdDefaultFastPeriod,
+	slowPeriod = macdDefaultSlowPeriod,
+	signalPeriod = macdDefaultSignalPeriod,
 	usePeriodAsSeedLength = false
-	// ): [number, number] {
 ): { line: number; signal: number } {
-	// const [macds, signals] = macd(
 	const macdResult = macd(
 		array,
 		fastPeriod,
@@ -117,13 +113,8 @@ export function macdGetOneResult(
 		usePeriodAsSeedLength
 	);
 
-	// return [
-	// 	getLastElementOfArray(macds) || NaN,
-	// 	getLastElementOfArray(signals) || NaN
-	// ];
-
 	return {
-		line: getLastElementOfArray(macdResult.line) || NaN,
-		signal: getLastElementOfArray(macdResult.signal) || NaN
+		line: getLastElementOfNumericArray(macdResult.line),
+		signal: getLastElementOfNumericArray(macdResult.signal)
 	};
 }

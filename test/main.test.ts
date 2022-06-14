@@ -5,12 +5,13 @@
 import * as macdKaelZhang from 'macd';
 import * as d3fc from '@d3fc/d3fc-technical-indicator';
 
-// import { pointwise } from 'thaw-common-utilities.ts';
-
 import {
 	ema,
 	macd,
-	macdGetOneResult // , sma
+	macdDefaultFastPeriod,
+	macdDefaultSignalPeriod,
+	macdDefaultSlowPeriod,
+	macdGetOneResult
 } from '..';
 
 interface ID3FCResult {
@@ -24,9 +25,9 @@ const array1 = [
 	2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71
 ];
 
-const fast = 12,
-	slow = 26,
-	signal = 9;
+const fast = macdDefaultFastPeriod;
+const slow = macdDefaultSlowPeriod;
+const signal = macdDefaultSignalPeriod;
 
 const fnNaNToUndefined = (n: number) => (Number.isNaN(n) ? undefined : n);
 
