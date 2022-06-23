@@ -1,7 +1,5 @@
 // thaw-macd/src/main.ts
 
-'use strict';
-
 import {
 	cascade,
 	createNaNArray,
@@ -17,10 +15,7 @@ import {
 // y=n=>typeof n,z=n=>!((y(n)==='string'&&!n.trim())||y(n)!=='number')&&(n-n+1)>=0
 // Also, why not replace (n-n+1)>=0 with (n-n+1)>0 ?
 
-// function isNumber(n: unknown): boolean {
-// 	return typeof n === 'number' && !Number.isNaN(n) && Number.isFinite(n);
-// }
-
+// Appel's recommended default values:
 export const macdDefaultFastPeriod = 12;
 export const macdDefaultSlowPeriod = 26;
 export const macdDefaultSignalPeriod = 9;
